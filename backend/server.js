@@ -1,15 +1,16 @@
 require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
-
+const workoutRoutes = require('./routes//workoutRoutes');
 
 
 const app = express();
 
 app.use(express.json());
-app.get('/', (req, res) => {
-    res.json({ mssg: "hello" });
-});
+
+
+app.use('/workouts', workoutRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
