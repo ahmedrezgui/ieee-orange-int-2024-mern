@@ -11,6 +11,7 @@ const WorkoutDetails = ({ workout }) => {
     const [reps, setReps] = useState('')
     const [error, setError] = useState(null)
     const [emptyFields, setEmptyFields] = useState([])
+    const [updatedWorkout, setUpdatedWorkout] = useState({})
 
     const openForm = () => {
         setUpdateForm(!updateForm)
@@ -27,38 +28,18 @@ const WorkoutDetails = ({ workout }) => {
         }
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        const workout = { title, load, reps }
-
-        const response = await fetch('http://localhost:4000/workouts', {
-            method: 'POST',
-            body: JSON.stringify(workout),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        const json = await response.json()
-
-        if (!response.ok) {
-            setError(json.error)
-            setEmptyFields(json.emptyFields)
-        }
-        if (response.ok) {
-            setEmptyFields([])
-            setError(null)
-            setTitle('')
-            setLoad('')
-            setReps('')
-            dispatch({ type: 'CREATE_WORKOUT', payload: json })
-        }
-
-    }
     const handleUpdate = async () => {
+
+        const newtitle = title ? title : workout.title;
+        const newload = load ? load : workout.load;
+        const newreps = reps ? reps : workout.reps;
+
+        setUpdatedWorkout({ title: newtitle, load: newload, reps: newreps })
+
+
         const response = await fetch('http://localhost:4000/workouts/' + workout._id, {
             method: 'PATCH',
-            body: JSON.stringify(workout),
+            body: JSON.stringify(updatedWorkout),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -124,7 +105,7 @@ const WorkoutDetails = ({ workout }) => {
                     className={`form-input ${emptyFields.includes('reps') ? 'error' : ''}`}
                 />
 
-                <button type="submit" className="submit-button">Add Workout</button>
+                <button type="submit" className="submit-button">Update Workout</button>
                 {error && <div className="error-message">{error}</div>}
             </form>
         </>
